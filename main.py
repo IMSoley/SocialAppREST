@@ -1,5 +1,3 @@
-from os import stat
-from turtle import pos
 from typing import Optional
 from fastapi import FastAPI, Response, status, HTTPException
 from fastapi import Body
