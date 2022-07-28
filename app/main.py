@@ -1,11 +1,4 @@
-from msilib import schema
-from pyexpat import model
-from turtle import pos
-from typing import Optional
 from fastapi import FastAPI, Response, status, HTTPException, Depends
-from psycopg2.extras import RealDictCursor
-import psycopg2
-import time
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .database import engine, get_db
