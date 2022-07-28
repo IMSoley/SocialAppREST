@@ -1,11 +1,18 @@
+from pyexpat import model
 from typing import Optional
-from fastapi import FastAPI, Response, status, HTTPException
+from fastapi import FastAPI, Response, status, HTTPException, Depends
 from pydantic import BaseModel
 from psycopg2.extras import RealDictCursor
 import psycopg2
 import time
+from sqlalchemy.orm import Session
+from . import models
+from .database import engine, get_db
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
 
 # for post model
 class Post(BaseModel):
@@ -32,6 +39,10 @@ while True:
 async def root():
     return {"message": "Welcome to My API!!!"}
 
+@app.get("/sqlalchemy")
+def test_post(db: Session = Depends(get_db)):
+    posts = db.query(models.Post).all()
+    return posts
 
 # get all posts
 @app.get("/posts")
