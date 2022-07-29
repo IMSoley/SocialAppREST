@@ -14,18 +14,6 @@ class PostBase(BaseModel):
 class PostCreate(PostBase):
     pass
 
-# send response to client, schema
-class ResponsePost(PostBase):
-    id: int
-    created_at: datetime
-    class Config:
-        orm_mode = True
-
-# user create model schema
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
-
 # user response model schema
 class UserOut(BaseModel):
     id: int
@@ -33,6 +21,20 @@ class UserOut(BaseModel):
     created_at: datetime
     class Config: # convert it to pydantic model
         orm_mode = True
+
+# send response to client, schema
+class ResponsePost(PostBase):
+    id: int
+    created_at: datetime
+    owner_id: int
+    owner: UserOut
+    class Config:
+        orm_mode = True
+
+# user create model schema
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
 
 # user login model schema
 class UserLogin(BaseModel):
