@@ -17,4 +17,3 @@ app.include_router(user.router)
 async def root():
     return {"message": "Welcome to My API!!!"}
 
-

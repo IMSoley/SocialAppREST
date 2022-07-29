@@ -4,16 +4,19 @@ from typing import List
 from .. import models, schemas
 from ..database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/posts",
+    tags=["Posts"]
+)
 
 # get all posts
-@router.get("/posts", response_model=List[schemas.ResponsePost])
+@router.get("/", response_model=List[schemas.ResponsePost])
 def get_posts(db: Session = Depends(get_db)):
     posts = db.query(models.Post).all()
     return posts
 
 # create a new post
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.ResponsePost)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ResponsePost)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     new_post = models.Post(**post.dict())
     db.add(new_post)
@@ -22,7 +25,7 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     return new_post
 
 # get a specific post by id
-@router.get("/posts/{post_id}", response_model=schemas.ResponsePost)
+@router.get("/{post_id}", response_model=schemas.ResponsePost)
 def get_post(post_id: int, db: Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not post:
@@ -31,7 +34,7 @@ def get_post(post_id: int, db: Session = Depends(get_db)):
     return post
 
 # delete a specific post by id
-@router.delete("/posts/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(post_id: int, db: Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id)
     if post.first() is None:
@@ -42,7 +45,7 @@ def delete_post(post_id: int, db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 # update a specific post by id
-@router.put("/posts/{post_id}", response_model=schemas.ResponsePost)
+@router.put("/{post_id}", response_model=schemas.ResponsePost)
 def update_post(post_id: int, post: schemas.PostCreate, db: Session = Depends(get_db)):
     post_to_update = db.query(models.Post).filter(models.Post.id == post_id)
     update_post = post_to_update.first()
