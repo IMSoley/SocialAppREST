@@ -1,6 +1,8 @@
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+from pydantic.types import conint
+from requests import post
 
 # schema/pydantic post model - deasl with request & response of the client
 
@@ -31,6 +33,10 @@ class ResponsePost(PostBase):
     class Config:
         orm_mode = True
 
+class PostVote(BaseModel):
+    Post: ResponsePost
+    votes: int
+
 # user create model schema
 class UserCreate(BaseModel):
     email: EmailStr
@@ -49,3 +55,8 @@ class Token(BaseModel):
 # token data schema
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(le=1)
+
