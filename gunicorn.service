@@ -1,0 +1,13 @@
+[unit]
+Description=Gunicorn instance for API
+After=network.target
+
+[Service]
+User=soley
+Group=soley
+WorkingDirectory=/home/soley/app/src
+Environment="PATH=/home/soley/app/venv/bin"
+ExecStart=/home/soley/app/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000
+
+[Install]
+WantedBy=multi-user.target
