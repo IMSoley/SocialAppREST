@@ -7,6 +7,8 @@ from app.main import app
 from app.config import settings
 from app.database import get_db, Base
 from alembic import command
+from app.oauth2 import create_access_token
+from app import models
 
 SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}_test"
 
@@ -48,3 +50,31 @@ def test_user(client):
     new_user = res.json()
     new_user["password"] = user_data["password"]
     return new_user
+
+
+# for posts
+@pytest.fixture(scope="function")
+def token(test_user):
+    return create_access_token({"user_id": test_user["id"]})
+
+
+@pytest.fixture(scope="function")
+def authorized_client(client, token):
+    client.headers = {
+        **client.headers,
+        "Authorization": f"Bearer {token}"
+    }
+    return client
+
+
+@pytest.fixture(scope="function")
+def test_posts(test_user, session):
+    posts_data = [
+        {"title": "Hello", "content": "Hello World", "owner_id": test_user["id"]},
+        {"title": "Hello2", "content": "Hello World2", "owner_id": test_user["id"]},
+        {"title": "Hello3", "content": "Hello World3", "owner_id": test_user["id"]}
+    ]
+    session.add_all([models.Post(**post) for post in posts_data])
+    session.commit()
+    posts = session.query(models.Post).all()
+    return posts
