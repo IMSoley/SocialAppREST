@@ -37,6 +37,13 @@ class PostVote(BaseModel):
     Post: ResponsePost
     votes: int
 
+
+class PostOut(BaseModel):
+    Post: ResponsePost
+    votes: int
+    class Config:
+        orm_mode = True
+
 # user create model schema
 class UserCreate(BaseModel):
     email: EmailStr
