@@ -1,4 +1,6 @@
 from typing import List
+
+import pytest
 from app import schemas, models
 
 def test_get_all_post(authorized_client, test_posts):
@@ -29,3 +31,19 @@ def test_get_one_post(authorized_client, test_posts):
     assert post.Post.id == test_posts[0].id
     assert post.Post.title == test_posts[0].title
     assert post.Post.content == test_posts[0].content
+
+
+@pytest.mark.parametrize("title, content, published", [
+    ("First post title", "content", True),
+    ("Second post title", "content", False),
+    ("Third post title", "content", True),
+    ("Forth post title", "content", False),
+    ("Fifth post title", "content", True)
+])
+def test_create_post(authorized_client, test_user, test_posts, title, content, published):
+    res = authorized_client.post("/posts/", json={"title": title, "content": content, "published": published})
+    created_post = schemas.PostBase(**res.json())
+    assert res.status_code == 201
+    assert created_post.title == title
+    assert created_post.content == content
+    assert created_post.published == published
