@@ -47,3 +47,19 @@ def test_create_post(authorized_client, test_user, test_posts, title, content, p
     assert created_post.title == title
     assert created_post.content == content
     assert created_post.published == published
+
+def test_create_post_default_published_true(authorized_client, test_user, test_posts):
+    res = authorized_client.post("/posts/", json={"title": "Test title", "content": "Test content"})
+    created_post = schemas.PostBase(**res.json())
+    assert res.status_code == 201
+    assert created_post.published == True
+    assert created_post.title == "Test title"
+    assert created_post.content == "Test content"
+
+
+def test_unauthorized_create_post(client, test_user, test_posts):
+    res = client.post("/posts/", json={"title": "Test title", "content": "Test content"})
+    assert res.status_code == 401
+
+
+
