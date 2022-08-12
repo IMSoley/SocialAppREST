@@ -27,5 +27,5 @@ app.include_router(vote.router)
 # the root path of the API
 @app.get("/")
 async def root():
-    return {"message": "Welcome to My FastAPI!!!!"}
+    return {"message": "Welcome to SocialAppREST API!"}
 
